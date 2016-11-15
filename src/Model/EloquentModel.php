@@ -1,6 +1,7 @@
 <?php namespace Anomaly\Streams\Platform\Model;
 
 use Anomaly\Streams\Platform\Collection\CacheCollection;
+use Anomaly\Streams\Platform\Entry\EntryModel;
 use Anomaly\Streams\Platform\Traits\Hookable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -679,6 +680,10 @@ class EloquentModel extends Model implements Arrayable, PresentableInterface
     {
         if (isset($this->cache['fallback_locale'])) {
             return $this->cache['fallback_locale'];
+        }
+
+        if ($this instanceof EntryModel) {
+            return $this->cache['fallback_locale'] = config('app.locale');
         }
 
         return $this->cache['fallback_locale'] = config('app.fallback_locale');
