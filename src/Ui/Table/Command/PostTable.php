@@ -1,11 +1,13 @@
 <?php namespace Anomaly\Streams\Platform\Ui\Table\Command;
 
 use Anomaly\Streams\Platform\Ui\Table\Component\Action\Command\ExecuteAction;
+use Anomaly\Streams\Platform\Ui\Table\Event\TableWasPosted;
 use Anomaly\Streams\Platform\Ui\Table\Multiple\MultipleTableBuilder;
 use Anomaly\Streams\Platform\Ui\Table\TableBuilder;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\Routing\ResponseFactory;
+use Illuminate\Contracts\Events\Dispatcher;
 
 /**
  * Class PostTable
@@ -40,9 +42,10 @@ class PostTable
      *
      * @param  Request         $request
      * @param  ResponseFactory $response
+     * @param  Dispatcher $events
      * @throws \Exception
      */
-    public function handle(Request $request, ResponseFactory $response)
+    public function handle(Request $request, ResponseFactory $response, Dispatcher $events)
     {
         if ($this->builder instanceof MultipleTableBuilder) {
             return;
@@ -53,5 +56,7 @@ class PostTable
         if (!$this->builder->getTableResponse()) {
             $this->builder->setTableResponse($response->redirectTo($request->fullUrl()));
         }
+
+        $events->fire(new TableWasPosted($this->builder));
     }
 }

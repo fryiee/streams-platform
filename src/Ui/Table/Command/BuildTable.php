@@ -8,8 +8,10 @@ use Anomaly\Streams\Platform\Ui\Table\Component\Header\Command\BuildHeaders;
 use Anomaly\Streams\Platform\Ui\Table\Component\Row\Command\BuildRows;
 use Anomaly\Streams\Platform\Ui\Table\Component\View\Command\BuildViews;
 use Anomaly\Streams\Platform\Ui\Table\Component\View\Command\SetActiveView;
+use Anomaly\Streams\Platform\Ui\Table\Event\TableWasBuilt;
 use Anomaly\Streams\Platform\Ui\Table\TableBuilder;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Contracts\Events\Dispatcher;
 
 /**
  * Class BuildTable
@@ -43,7 +45,7 @@ class BuildTable
     /**
      * Handle the command.
      */
-    public function handle()
+    public function handle(Dispatcher $events)
     {
         /*
          * Resolve and set the table model and stream.
@@ -98,5 +100,7 @@ class BuildTable
          * Lastly table rows.
          */
         $this->dispatch(new BuildRows($this->builder));
+
+        $events->fire(new TableWasBuilt($this->builder));
     }
 }
