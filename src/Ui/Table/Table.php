@@ -307,7 +307,7 @@ class Table
      */
     public function addFilter(FilterInterface $filter)
     {
-        $this->filters->put($filter->getSlug(), $filter);
+        $this->filters->put($this->getOption('prefix').$filter->getSlug(), $filter);
 
         return $this;
     }
